@@ -6,7 +6,7 @@ import connectDB from "./config/db.js";
 import "colors";
 dotenv.config();
 connectDB();
-
+// test
 const app = express();
 app.use(express.json());
 app.use(cors());
