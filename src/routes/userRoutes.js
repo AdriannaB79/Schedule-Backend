@@ -1,10 +1,11 @@
 import express from "express";
-import authMiddleware from "../middleware/authMiddleware.js";
+import { getAllUsers } from "../controllers/userController.js";
+import authMiddleware from "../middleware/authMiddleware.js"; // Reimportando o middleware
 
 const router = express.Router();
 
-router.get("/profile", authMiddleware, (req, res) => {
-  res.json({ message: "Profile data", user: req.user });
-});
+router.use(authMiddleware); // Reativando a autenticação
+
+router.get("/", getAllUsers); // Endpoint para listar todos os usuários
 
 export default router;
