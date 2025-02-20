@@ -1,5 +1,5 @@
 import express from "express";
-import Shift from "../models/Shift.js";
+import Shift from "../models/shiftModel.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
