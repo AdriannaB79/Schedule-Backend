@@ -1,11 +1,11 @@
 import express from "express";
-import { getAllUsers } from "../controllers/userController.js";
-import authMiddleware from "../middleware/authMiddleware.js"; // Reimportando o middleware
+import { getProfile, getAllUsers } from "../controllers/userController.js"; // Importe as funções do controller
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.use(authMiddleware); // Reativando a autenticação
+router.get("/", getAllUsers); // Rota para listar todos os usuários (não protegida)
 
-router.get("/", getAllUsers); // Endpoint para listar todos os usuários
+router.get("/menu-profile", authMiddleware, getProfile); // Rota protegida para o perfil
 
 export default router;

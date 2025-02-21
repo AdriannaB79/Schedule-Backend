@@ -46,13 +46,13 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const token = generateToken(user._id); // using fuction token
@@ -61,8 +61,10 @@ export const login = async (req, res) => {
       token,
       user: {
         _id: user._id,
-        name: user.name,
+        firstName: user.firstName, // Correção: firstName
+        lastName: user.lastName, // Adicionado lastName
         email: user.email,
+        userType: user.userType,
       },
     });
   } catch (error) {
