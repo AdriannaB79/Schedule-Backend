@@ -1,31 +1,125 @@
-import User from "../models/userModel.js"; // Importe o model de usuário
+import User from "../models/userModel.js"; // Importa o modelo de usuário
 
+// 🔹 Obter todos os usuários (sem senha)
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password"); // Busca todos os usuários (sem a senha)
-    res.json(users);
+    const users = await User.find().select("-password");
+
+    if (!users.length) {
+      return res.status(200).json({ msg: "No users found in the DB" });
+    }
+
+    res.status(200).json(users);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error in getAllUsers:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-export const getProfile = async (req, res) => {
+// 🔹 Obter um usuário específico pelo ID
+export const getOneUser = async (req, res) => {
   try {
-    console.log("ID do usuário do token:", req.user.id); // Verifique o ID do usuário
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error in getOneUser:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// 🔹 Criar um novo usuário
+export const createUser = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, userType } = req.body;
+
+    // Verifica se o email já existe
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "Email already in use" });
+    }
+
+    // Cria novo usuário
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password,
+      userType,
+    });
+    await newUser.save();
+
+    res.status(201).json({ msg: "User created successfully", user: newUser });
+  } catch (error) {
+    console.error("Error in createUser:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// 🔹 Atualizar um usuário pelo ID
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { firstName, lastName, email, userType } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { firstName, lastName, email, userType },
+      { new: true } // Retorna o documento atualizado
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ msg: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error in updateUser:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// 🔹 Deletar um usuário pelo ID
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedUser = await User.findByIdAndDelete(id).select("-password");
+
+    if (!deletedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ msg: "User deleted successfully", user: deletedUser });
+  } catch (error) {
+    console.error("Error in deleteUser:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// 🔹 Obter perfil do usuário autenticado (com base no token)
+export const getMe = async (req, res) => {
+  try {
+    console.log("User ID from token:", req.user.id);
 
     const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
-      console.log("Usuário não encontrado no banco de dados."); // Verifique se o usuário existe
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Dados do usuário encontrados:", user); // Verifique os dados do usuário
-
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
-    console.error("Erro na função getProfile:", error); // Log do erro detalhado
-    res.status(500).json({ message: "Server error", error: error.message }); // Envia mensagem de erro detalhada (apenas para desenvolvimento)
+    console.error("Error in getMe:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

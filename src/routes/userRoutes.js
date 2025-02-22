@@ -1,11 +1,24 @@
 import express from "express";
-import { getProfile, getAllUsers } from "../controllers/userController.js"; // Importe as funções do controller
+import {
+  getAllUsers,
+  getOneUser,
+  createUser,
+  updateUser,
+  deleteUser,
+  getMe,
+} from "../controllers/userController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getAllUsers); // Rota para listar todos os usuários (não protegida)
+// 🔹 Rotas públicas
+router.get("/", getAllUsers); // Listar todos os usuários
 
-router.get("/menu-profile", authMiddleware, getProfile); // Rota protegida para o perfil
+// 🔹 Rotas protegidas (precisam de autenticação)
+router.get("/me", authMiddleware, getMe); // Perfil do usuário autenticado
+router.get("/:id", authMiddleware, getOneUser); // Buscar usuário por ID
+router.post("/", authMiddleware, createUser); // Criar usuário
+router.put("/:id", authMiddleware, updateUser); // Atualizar usuário
+router.delete("/:id", authMiddleware, deleteUser); // Deletar usuário
 
 export default router;
