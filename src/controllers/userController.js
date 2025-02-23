@@ -65,11 +65,39 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, userType } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      gender, // Adicione todos os campos aqui
+      phoneNumber,
+      country,
+      city,
+      street,
+      zipCode,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+    } = req.body;
+
+    const updates = {};
+
+    if (firstName) updates.firstName = firstName;
+    if (lastName) updates.lastName = lastName;
+    if (email) updates.email = email;
+    if (gender) updates.gender = gender;
+    if (phoneNumber) updates.phoneNumber = phoneNumber;
+    if (country) updates.country = country;
+    if (city) updates.city = city;
+    if (street) updates.street = street;
+    if (zipCode) updates.zipCode = zipCode;
+    if (contractDetails) updates.contractDetails = contractDetails;
+    if (dateOfBirth) updates.dateOfBirth = dateOfBirth;
+    if (medicalId) updates.medicalId = medicalId;
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { firstName, lastName, email, userType },
+      updates,
       { new: true } // Retorna o documento atualizado
     ).select("-password");
 
