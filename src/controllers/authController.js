@@ -55,16 +55,27 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = generateToken(user._id); // using fuction token
+    const token = generateToken(user._id); // using function token
 
+    // Aqui, alteramos para incluir todos os campos do usuário
     res.json({
       token,
       user: {
         _id: user._id,
-        firstName: user.firstName, // Correção: firstName
-        lastName: user.lastName, // Adicionado lastName
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         userType: user.userType,
+        gender: user.gender, // Adicionando o campo 'gender'
+        phoneNumber: user.phoneNumber, // Adicionando o campo 'phoneNumber'
+        country: user.country, // Adicionando o campo 'country'
+        city: user.city, // Adicionando o campo 'city'
+        street: user.street, // Adicionando o campo 'street'
+        zipCode: user.zipCode, // Adicionando o campo 'zipCode'
+        contractDetails: user.contractDetails, // Adicionando o campo 'contractDetails'
+        dateOfBirth: user.dateOfBirth, // Adicionando o campo 'dateOfBirth'
+        medicalId: user.medicalId, // Adicionando o campo 'medicalId'
+        avatar: user.avatar, // Adicionando o campo 'avatar'
       },
     });
   } catch (error) {
