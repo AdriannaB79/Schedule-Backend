@@ -11,8 +11,25 @@ const generateToken = (id) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, department, nurseType, institution } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      gender,
+      department,
+      userType,
+      institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+      avatar,
+    } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -22,12 +39,23 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
+      gender,
       department,
-      nurseType,
+      userType,
       institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+      avatar,
     });
 
     await newUser.save();
@@ -46,23 +74,35 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = generateToken(user._id); // using fuction token
+    const token = generateToken(user._id);
 
     res.json({
       token,
       user: {
         _id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
+        userType: user.userType,
+        gender: user.gender,
+        phoneNumber: user.phoneNumber,
+        country: user.country,
+        city: user.city,
+        street: user.street,
+        zipCode: user.zipCode,
+        contractDetails: user.contractDetails,
+        dateOfBirth: user.dateOfBirth,
+        medicalId: user.medicalId,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
