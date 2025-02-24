@@ -4,7 +4,6 @@ const authMiddleware = (req, res, next) => {
   const token = req.header("Authorization");
 
   if (!token) {
-    // Verifica se o header Authorization existe
     return res.status(401).json({ message: "Access denied!" });
   }
 

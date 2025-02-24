@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema(
       required: true,
     },
 
-    avatar: { type: String, default: "" }, // URL da imagem ou base64
+    avatar: { type: String, default: "" },
     userType: {
       type: String,
       enum: ["RN", "LPN", "Chief"],
@@ -43,10 +43,10 @@ const userSchema = mongoose.Schema(
       required: true,
       minLength: [6, "Minimum length is 6 characters"],
     },
-    country: { type: String }, // Endereço dividido
-    city: { type: String }, // Endereço dividido
-    street: { type: String }, // Endereço dividido
-    zipCode: { type: String }, // Endereço dividido
+    country: { type: String },
+    city: { type: String },
+    street: { type: String },
+    zipCode: { type: String },
     phoneNumber: { type: String },
     contractDetails: { type: String, default: "" },
     dateOfBirth: { type: Date },

@@ -1,6 +1,6 @@
 import User from "../models/userModel.js"; // Importa o modelo de usuário
 
-// 🔹 Obter todos os usuários (sem senha)
+// user withou password
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -16,7 +16,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// 🔹 Obter um usuário específico pelo ID
+// get specific user
 export const getOneUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -33,25 +33,52 @@ export const getOneUser = async (req, res) => {
   }
 };
 
-// 🔹 Criar um novo usuário
+// create new user
 export const createUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, userType } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      userType,
+      gender,
+      department,
+      institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+    } = req.body;
 
-    // Verifica se o email já existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ msg: "Email already in use" });
     }
 
-    // Cria novo usuário
     const newUser = new User({
       firstName,
       lastName,
       email,
       password,
       userType,
+      gender,
+      department,
+      institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
     });
+
     await newUser.save();
 
     res.status(201).json({ msg: "User created successfully", user: newUser });
@@ -61,7 +88,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// 🔹 Atualizar um usuário pelo ID
+// update specific user
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,7 +96,7 @@ export const updateUser = async (req, res) => {
       firstName,
       lastName,
       email,
-      gender, // Adicione todos os campos aqui
+      gender,
       phoneNumber,
       country,
       city,
@@ -95,11 +122,9 @@ export const updateUser = async (req, res) => {
     if (dateOfBirth) updates.dateOfBirth = dateOfBirth;
     if (medicalId) updates.medicalId = medicalId;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updates,
-      { new: true } // Retorna o documento atualizado
-    ).select("-password");
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+    }).select("-password");
 
     if (!updatedUser) {
       return res.status(404).json({ msg: "User not found" });
@@ -114,17 +139,18 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// 🔹 Deletar um usuário pelo ID
+// delete specific user
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`Recebida solicitação para deletar o usuário com ID: ${id}`);
 
     const deletedUser = await User.findByIdAndDelete(id).select("-password");
 
     if (!deletedUser) {
       return res.status(404).json({ msg: "User not found" });
     }
-
+    console.log("Usuário deletado com sucesso!");
     res
       .status(200)
       .json({ msg: "User deleted successfully", user: deletedUser });
@@ -134,7 +160,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// 🔹 Obter perfil do usuário autenticado (com base no token)
+// get the user profile (already authenticated)
 export const getMe = async (req, res) => {
   try {
     console.log("User ID from token:", req.user.id);

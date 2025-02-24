@@ -11,14 +11,14 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// 🔹 Rotas públicas
-router.get("/", getAllUsers); // Listar todos os usuários
+router.post("/", createUser); // Rota de registro (sem middleware)
 
-// 🔹 Rotas protegidas (precisam de autenticação)
-router.get("/me", authMiddleware, getMe); // Perfil do usuário autenticado
-router.get("/:id", authMiddleware, getOneUser); // Buscar usuário por ID
-router.post("/", authMiddleware, createUser); // Criar usuário
-router.put("/:id", authMiddleware, updateUser); // Atualizar usuário
-router.delete("/:id", authMiddleware, deleteUser); // Deletar usuário
+router.use(authMiddleware); // Middleware aplicado *após* a rota de registro
+
+router.get("/", getAllUsers);
+router.get("/me", getMe);
+router.get("/:id", getOneUser);
+router.put("/:id", updateUser);
+router.delete("/:id", deleteUser);
 
 export default router;

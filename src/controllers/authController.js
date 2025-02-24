@@ -11,8 +11,25 @@ const generateToken = (id) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, department, nurseType, institution } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      gender,
+      department,
+      userType,
+      institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+      avatar,
+    } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -22,12 +39,23 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
+      gender,
       department,
-      nurseType,
+      userType,
       institution,
+      country,
+      city,
+      street,
+      zipCode,
+      phoneNumber,
+      contractDetails,
+      dateOfBirth,
+      medicalId,
+      avatar,
     });
 
     await newUser.save();
@@ -55,9 +83,8 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = generateToken(user._id); // using function token
+    const token = generateToken(user._id);
 
-    // Aqui, alteramos para incluir todos os campos do usuário
     res.json({
       token,
       user: {
@@ -66,16 +93,16 @@ export const login = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         userType: user.userType,
-        gender: user.gender, // Adicionando o campo 'gender'
-        phoneNumber: user.phoneNumber, // Adicionando o campo 'phoneNumber'
-        country: user.country, // Adicionando o campo 'country'
-        city: user.city, // Adicionando o campo 'city'
-        street: user.street, // Adicionando o campo 'street'
-        zipCode: user.zipCode, // Adicionando o campo 'zipCode'
-        contractDetails: user.contractDetails, // Adicionando o campo 'contractDetails'
-        dateOfBirth: user.dateOfBirth, // Adicionando o campo 'dateOfBirth'
-        medicalId: user.medicalId, // Adicionando o campo 'medicalId'
-        avatar: user.avatar, // Adicionando o campo 'avatar'
+        gender: user.gender,
+        phoneNumber: user.phoneNumber,
+        country: user.country,
+        city: user.city,
+        street: user.street,
+        zipCode: user.zipCode,
+        contractDetails: user.contractDetails,
+        dateOfBirth: user.dateOfBirth,
+        medicalId: user.medicalId,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
